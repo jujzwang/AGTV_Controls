@@ -93,6 +93,7 @@ class App:
   def periodicCall(self):
       now = datetime.now()
 
+      # This is necessary! 
       if (now - self.lastPing).total_seconds() > .3:
           print "Time to ping!"
           ser.write("#p;");

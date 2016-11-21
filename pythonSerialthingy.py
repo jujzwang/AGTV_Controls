@@ -1,21 +1,32 @@
 import serial
 from datetime import *
 
-ser = serial.Serial('/dev/cu.RN42-5419-SPP',115200,timeout=0)
-ser.write('#lr;#dl;#r0;#pv;')
+#ser = serial.Serial('/dev/cu.RN42-5419-SPP',115200,timeout=0)
+#ser.write('#lr;#dl;#r0;#pv;')
 from Tkinter import *
+from agtv_node import AGTV_CONTROL as Vicon
 
 class App:
   def __init__(self, master):
     self.lastPing = datetime.now()
     self.master = master
     self.periodicCall()
+
+    v = Vicon()
+
+    # #from acl_system.msg import ViconState
+    # #import rospy
+    #     rospy.Subscriber("/AGTV/vicon", ViconState, v.viconCB)
+    ##    rospy.loginfo("AGTV node initialized")     
+    ##    rospy.spin()
+    v.test("hello")
+    
     frame = Frame(master)
     frame.pack()
     master.title("Motor controls")
     #button 1
     self.button1 = Button(frame,
-                         text="Connect",
+                         text="Arm",
                          command=self.enable)
     self.button1.pack(side=LEFT)
 
@@ -25,30 +36,12 @@ class App:
                          command=self.runn)
     self.button2.pack(side=LEFT)
 
-##    #button 3
-##    self.button3 = Button(frame,
-##                         text="runn",
-##                         command=self.runn(.1,0))
-##    self.button3.pack(side=LEFT)
-
-    #text input 1
-    self.label1 = Label(frame, text = "Main Motor Throttle")
-    self.label1.pack(side=LEFT)
-#    self.text1 = Entry(frame,textvariable=content)
-    self.text1 = Entry(frame)
-    self.text1.pack(side=LEFT)
-
-    #text input 2
-    self.label2 = Label(frame, text = "Slew Motor Throttle")
-    self.label2.pack(side=LEFT)
-    self.text2 = Entry(frame)
-    self.text2.pack(side=LEFT)
-
-    #button 4
-    self.button4 = Button(frame,
+    #button 3
+    self.button3 = Button(frame,
                          text="Kill",
                          command=self.kill)
-    self.button4.pack(side=LEFT)
+    self.button3.pack(side=LEFT)
+    
   def kill(self):
     ser.write('#r0;')
     ser.close()
@@ -56,7 +49,7 @@ class App:
 
   def enable(self):
     ser.write('#r1;')
-    print "you are now connected"
+    print "you are now armed"
 
 
   def motor0(self,throttle0): # throttle0 can be any float between 0 and 1
@@ -105,8 +98,4 @@ root = Tk()
 app = App(root)
 root.mainloop()
 
-
-#main = float(raw_input("main throttle"))
-#slew = float(raw_input("slew throttle"))
-#What a small change
 
